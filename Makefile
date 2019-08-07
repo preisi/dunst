@@ -53,7 +53,7 @@ DEPS := ${SRC:.c=.d} ${TEST_SRC:.c=.d}
 
 
 .PHONY: all debug
-all: doc dunst service
+all: doc dunst dunstify service
 
 debug: CFLAGS   += ${CPPFLAGS_DEBUG} ${CFLAGS_DEBUG}
 debug: LDFLAGS  += ${LDFLAGS_DEBUG}
@@ -151,14 +151,18 @@ clean-coverage-run:
 	${FIND} . -type f -name '*.gcov' -delete
 	${FIND} . -type f -name '*.gcda' -delete
 
-.PHONY: install install-dunst install-doc \
+.PHONY: install install-dunst install-dunstify install-doc \
         install-service install-service-dbus install-service-systemd \
         uninstall \
         uninstall-service uninstall-service-dbus uninstall-service-systemd
-install: install-dunst install-doc install-service
+install: install-dunst install-dunstify install-doc install-service
 
 install-dunst: dunst doc
 	install -Dm755 dunst ${DESTDIR}${BINDIR}/dunst
+	install -Dm644 docs/dunst.1 ${DESTDIR}${MANPREFIX}/man1/dunst.1
+
+install-dunstify: dunstify doc
+	install -Dm755 dunstify ${DESTDIR}${BINDIR}/dunstify
 	install -Dm644 docs/dunst.1 ${DESTDIR}${MANPREFIX}/man1/dunst.1
 
 install-doc:
@@ -175,6 +179,7 @@ endif
 
 uninstall: uninstall-service
 	rm -f ${DESTDIR}${BINDIR}/dunst
+	rm -f ${DESTDIR}${BINDIR}/dunstify
 	rm -f ${DESTDIR}${MANPREFIX}/man1/dunst.1
 	rm -rf ${DESTDIR}${DATADIR}/dunst
 
